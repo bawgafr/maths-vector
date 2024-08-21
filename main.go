@@ -1,9 +1,14 @@
 package main
 
-import vectors "github.com/bawgafr/maths/vectors"
+import (
+	"fmt"
+
+	vector "github.com/bawgafr/vector/vectors"
+)
 
 func main() {
 
-	a := vectors.Vector{}
+	a := vector.Vector{}
 
+	fmt.Println(a)
 }
