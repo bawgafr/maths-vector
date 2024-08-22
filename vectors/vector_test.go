@@ -149,12 +149,12 @@ func TestHeading(t *testing.T) {
 
 }
 
-func TestSetHeading(t *testing.T) {
-	t.Run("set heading v{1,1} to pi/2", func(t *testing.T) {
+func TestRotate(t *testing.T) {
+	t.Run("rotate v{1,1} by pi/2", func(t *testing.T) {
 		v1 := NewVector(1, 1)
 		m1 := v1.Mag()
 
-		v2 := setHeading(v1, math.Pi/4)
+		v2 := rotate(v1, math.Pi/4)
 		m2 := v2.Mag()
 
 		tv := NewVector(math.Sqrt2, 0)
@@ -169,11 +169,11 @@ func TestSetHeading(t *testing.T) {
 
 	})
 
-	t.Run("set heading v{1,1} to pi/2", func(t *testing.T) {
+	t.Run("rotate v{1,1} by pi/2", func(t *testing.T) {
 		v1 := NewVector(1, 1)
 		m1 := v1.Mag()
 
-		v2 := setHeading(v1, math.Pi/2)
+		v2 := rotate(v1, math.Pi/2)
 		m2 := v2.Mag()
 
 		if !compare(t, m1, m2) {

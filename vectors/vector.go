@@ -3,6 +3,7 @@ package vector
 import (
 	"fmt"
 	"math"
+	"math/rand"
 )
 
 type Vector struct {
@@ -28,13 +29,14 @@ type Vector struct {
 // *equals(Vector) -- x==X && y==Y && z==Z
 // *setMag(float64) sets the magnitude of the vector
 // *heading() calcs the angle a 2d vector makes with the positive x axis. Angles increase clockwise
+// *rotate(float64) rotates a vector without changing magnitude
+// *random2d() -- creates a new 2d unit vector with a random heading
+// *random3d() -- creates a new 3d unit vector with a random heading
+// *fromAngle(float64) -- creates a 2d vector from the passed angle
 
 // setHeading() rotates a 2d vector to a specific angle without changing magnitude
-// rotate(float64) rotates a vector without changing magnitude
+
 // lerp, slerp
-// fromAngle(float64) -- creates a 2d vector from the passed angle
-// random2d() -- creates a new 2d unit vector with a random heading
-// random3d() -- creates a new 3d unit vector with a random heading
 
 func (v Vector) String() string {
 	return fmt.Sprintf("{%2f, %2f, %2f}", v.X, v.Y, v.Z)
@@ -56,7 +58,8 @@ func (v1 Vector) Equals(v2 Vector) bool {
 	y := math.Abs(v1.Y - v2.Y)
 	z := math.Abs(v1.Z - v2.Z)
 
-	return x < 1e-9 && y < 1e-9 && z < 1e-9}
+	return x < 1e-9 && y < 1e-9 && z < 1e-9
+}
 
 func NewVector(values ...float64) Vector {
 	x := 0.0
@@ -77,6 +80,19 @@ func NewVector(values ...float64) Vector {
 	return Vector{x, y, z}
 }
 
+// create a unit vector in a random direction
+func Random2d() Vector {
+	v := NewVector(rand.Float64(), rand.Float64())
+	v.Normalise()
+	return v
+}
+
+func Random3d() Vector {
+	v := NewVector(rand.Float64(), rand.Float64(), rand.Float64())
+	v.Normalise()
+	return v
+}
+
 // sets the values of the components
 //
 // Set() will set the components to {0,0,0}
@@ -94,12 +110,9 @@ func (v *Vector) Set(values ...float64) {
 
 	if l > 0 {
 		v.X = values[0]
-		v.Y = 0
-		v.Z = 0
 	}
 	if l > 1 {
 		v.Y = values[1]
-		v.Z = 0
 	}
 	if l > 2 {
 		v.Z = values[2]
@@ -298,7 +311,7 @@ func (v Vector) Heading() float64 {
 }
 
 // sets the angle of the vector without changing its magnitude
-func setHeading(v Vector, angle float64) Vector {
+func rotate(v Vector, angle float64) Vector {
 	// x2 = cos()x1 - sin()y1
 	// y2 = sin()x1 + cos()y1
 
@@ -306,4 +319,35 @@ func setHeading(v Vector, angle float64) Vector {
 	s := math.Sin(-angle)
 
 	return NewVector(c*v.X-s*v.Y, s*v.X+c*v.Y)
+}
+
+// rotates the vector by angle
+func (v *Vector) Rotate(angle float64) {
+	c := math.Cos(-angle)
+	s := math.Sin(-angle)
+
+	v.X = c*v.X - s*v.Y
+	v.Y = s*v.X + c*v.Y
+}
+
+// creates a vector of length l in the direction angle
+//
+// FromAngle(Angle float64, length float64). If length omitted then unit vector created
+func FromAngle(values ...float64) {
+	angle := values[0]
+	length := 1.0
+	if len(values) == 2 {
+		length = values[1]
+	}
+
+	x := math.Cos(angle)
+	y := math.Sin(angle)
+
+	v := NewVector(x, y)
+
+	v.Normalise()
+	if length != 1 {
+		v.Mult(length)
+	}
+
 }
