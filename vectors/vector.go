@@ -27,8 +27,8 @@ type Vector struct {
 // **angleBetween(Vector) returns the angle between this and the passe vector
 // *equals(Vector) -- x==X && y==Y && z==Z
 // *setMag(float64) sets the magnitude of the vector
+// *heading() calcs the angle a 2d vector makes with the positive x axis. Angles increase clockwise
 
-// heading() calcs the angle a 2d vector makes with the positive x axis. Angles increase clockwise
 // setHeading() rotates a 2d vector to a specific angle without changing magnitude
 // rotate(float64) rotates a vector without changing magnitude
 // lerp, slerp
@@ -42,13 +42,21 @@ func (v Vector) String() string {
 
 // check if the components of the two vectors are the same
 func Equals(v1, v2 Vector) bool {
-	return v1.X == v2.X && v1.Y == v2.Y && v1.Z == v2.Z
+
+	x := math.Abs(v1.X - v2.X)
+	y := math.Abs(v1.Y - v2.Y)
+	z := math.Abs(v1.Z - v2.Z)
+
+	return x < 1e-9 && y < 1e-9 && z < 1e-9
 }
 
 // check if the passed Vector has the same components as this Vector
 func (v1 Vector) Equals(v2 Vector) bool {
-	return v1.X == v2.X && v1.Y == v2.Y && v1.Z == v2.Z
-}
+	x := math.Abs(v1.X - v2.X)
+	y := math.Abs(v1.Y - v2.Y)
+	z := math.Abs(v1.Z - v2.Z)
+
+	return x < 1e-9 && y < 1e-9 && z < 1e-9}
 
 func NewVector(values ...float64) Vector {
 	x := 0.0
@@ -273,4 +281,29 @@ func SetMag(v Vector, m float64) Vector {
 func (v *Vector) SetMag(m float64) {
 	v.Normalise()
 	v.Mult(m)
+}
+
+// angle 2d vector makes with with positive x axis. Angle increases clockwise
+func Heading(v Vector) float64 {
+	base := NewVector(10, 0)
+	angle := AngleBetween(v, base)
+
+	return angle
+}
+
+// angle this 2d vector makes with the positive x axis
+func (v Vector) Heading() float64 {
+	base := NewVector(10, 0)
+	return base.AngleBetween(v)
+}
+
+// sets the angle of the vector without changing its magnitude
+func setHeading(v Vector, angle float64) Vector {
+	// x2 = cos()x1 - sin()y1
+	// y2 = sin()x1 + cos()y1
+
+	c := math.Cos(-angle)
+	s := math.Sin(-angle)
+
+	return NewVector(c*v.X-s*v.Y, s*v.X+c*v.Y)
 }

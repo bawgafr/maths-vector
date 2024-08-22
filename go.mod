@@ -1,3 +1,3 @@
 module github.com/bawgafr/vector
 
-go 1.22.5
+go 1.22.2

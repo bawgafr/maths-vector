@@ -1,6 +1,7 @@
 package vector
 
 import (
+	"log"
 	"math"
 	"testing"
 )
@@ -123,4 +124,72 @@ func TestNormalise(t *testing.T) {
 		t.Errorf("v not normalised %v", v)
 	}
 
+}
+
+func TestHeading(t *testing.T) {
+	t.Run("Test angle in SE quadrant", func(t *testing.T) {
+		v := NewVector(5, -5, 6)
+
+		h := Heading(v)
+
+		if compare(t, h, math.Pi/4) {
+			t.Errorf("should be + pi/4(%f) not %f", math.Pi/4, h)
+		}
+	})
+
+	t.Run("Test angle in NE quadrant", func(t *testing.T) {
+		v := NewVector(5, 5)
+
+		h := Heading(v)
+
+		if compare(t, h, (2*math.Pi)-math.Pi/4) {
+			t.Errorf("should be + pi/4(%f) not %f", math.Pi/4, h)
+		}
+	})
+
+}
+
+func TestSetHeading(t *testing.T) {
+	t.Run("set heading v{1,1} to pi/2", func(t *testing.T) {
+		v1 := NewVector(1, 1)
+		m1 := v1.Mag()
+
+		v2 := setHeading(v1, math.Pi/4)
+		m2 := v2.Mag()
+
+		tv := NewVector(math.Sqrt2, 0)
+
+		if !compare(t, m1, m2) {
+			t.Errorf("The magnitudes dont match %f vs %f", m1, m2)
+		}
+
+		if !v2.Equals(tv) {
+			t.Errorf("The coords are wrong %v (%v expected)", v2, tv)
+		}
+
+	})
+
+	t.Run("set heading v{1,1} to pi/2", func(t *testing.T) {
+		v1 := NewVector(1, 1)
+		m1 := v1.Mag()
+
+		v2 := setHeading(v1, math.Pi/2)
+		m2 := v2.Mag()
+
+		if !compare(t, m1, m2) {
+			t.Errorf("The magnitudes dont match %f vs %f", m1, m2)
+		}
+
+		if v2.X != 1 && v2.Y != -1 {
+			t.Errorf("The coords are wrong %v", v2)
+		}
+
+	})
+}
+
+func compare(t *testing.T, a, b float64) bool {
+	t.Helper()
+	c := math.Abs(a - b)
+	log.Println(c)
+	return c < 1.0e-8
 }
