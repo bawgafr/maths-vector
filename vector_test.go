@@ -4,6 +4,8 @@ import (
 	"log"
 	"math"
 	"testing"
+
+	"github.com/bawgafr/prettyprintradians"
 )
 
 func TestCreate(t *testing.T) {
@@ -154,7 +156,7 @@ func TestRotate(t *testing.T) {
 		v1 := NewVector(1, 1)
 		m1 := v1.Mag()
 
-		v2 := rotate(v1, math.Pi/4)
+		v2 := Rotate(v1, math.Pi/4)
 		m2 := v2.Mag()
 
 		tv := NewVector(math.Sqrt2, 0)
@@ -173,7 +175,7 @@ func TestRotate(t *testing.T) {
 		v1 := NewVector(1, 1)
 		m1 := v1.Mag()
 
-		v2 := rotate(v1, math.Pi/2)
+		v2 := Rotate(v1, math.Pi/2)
 		m2 := v2.Mag()
 
 		if !compare(t, m1, m2) {
@@ -185,6 +187,44 @@ func TestRotate(t *testing.T) {
 		}
 
 	})
+}
+
+func TestFromAngle(t *testing.T) {
+	test := func(t *testing.T, v1, v2 Vector, angle float64) {
+		t.Helper()
+		if !v1.Equals(v2) {
+			a := prettyprintradians.PrettyPrint(angle)
+			t.Errorf("not created from angle %s -- %v (expected %v)", a, v1, v2)
+		}
+
+	}
+
+	t.Run(
+		"Test from angle with only angle given",
+		func(t *testing.T) {
+			angle := math.Pi / 4
+			v := FromAngle(angle)
+
+			expected := NewVector(1, -1)
+			expected.Normalise()
+
+			test(t, v, expected, angle)
+		},
+	)
+
+	t.Run(
+		"Test from angle with only angle given",
+		func(t *testing.T) {
+			angle := (5.0 * math.Pi / 4.0) - 0.001
+			v := FromAngle(angle)
+
+			expected := NewVector(-1, -1)
+			expected.Normalise()
+
+			test(t, v, expected, angle)
+		},
+	)
+
 }
 
 func compare(t *testing.T, a, b float64) bool {

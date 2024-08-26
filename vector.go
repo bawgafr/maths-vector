@@ -2,6 +2,7 @@ package vector
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"math/rand"
 )
@@ -311,7 +312,7 @@ func (v Vector) Heading() float64 {
 }
 
 // sets the angle of the vector without changing its magnitude
-func rotate(v Vector, angle float64) Vector {
+func Rotate(v Vector, angle float64) Vector {
 	// x2 = cos()x1 - sin()y1
 	// y2 = sin()x1 + cos()y1
 
@@ -333,8 +334,8 @@ func (v *Vector) Rotate(angle float64) {
 // creates a vector of length l in the direction angle
 //
 // FromAngle(Angle float64, length float64). If length omitted then unit vector created
-func FromAngle(values ...float64) {
-	angle := values[0]
+func FromAngle(values ...float64) Vector {
+	angle := -1.0 * values[0]
 	length := 1.0
 	if len(values) == 2 {
 		length = values[1]
@@ -349,5 +350,44 @@ func FromAngle(values ...float64) {
 	if length != 1 {
 		v.Mult(length)
 	}
+
+	switch quadrant(angle) {
+	case "ne":
+		v.X = math.Abs(v.X)
+		v.Y = math.Abs(v.Y)
+	case "se":
+		v.X = math.Abs(v.X)
+		v.Y = -1.0 * math.Abs(v.Y)
+	case "sw":
+		v.X = -1.0 * math.Abs(v.X)
+		v.Y = -1.0 * math.Abs(v.Y)
+	case "nw":
+		v.X = -1.0 * math.Abs(v.X)
+		v.Y = math.Abs(v.Y)
+	}
+
+	return v
+}
+
+func quadrant(angle float64) string {
+	angle = math.Mod(angle, 2*math.Pi)
+
+	if angle >= 0 && angle <= math.Pi/2 {
+		log.Printf("%.2fπ  %s", angle, "se")
+		return "se"
+	}
+
+	if angle >= math.Pi/2 && angle <= math.Pi {
+		log.Printf("%.2fπ  %s", angle, "sw")
+		return "sw"
+	}
+
+	if angle >= math.Pi && angle < 3*math.Pi/2 {
+		log.Printf("%.2fπ  %s", angle, "nw")
+		return "nw"
+	}
+	log.Printf("%.2fπ  %s", angle, "ne")
+
+	return "ne"
 
 }
