@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	vector "github.com/bawgafr/vector/"
+	vector "github.com/bawgafr/vector"
 )
 
 func main() {
