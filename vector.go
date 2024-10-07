@@ -11,6 +11,7 @@ type Vector struct {
 	X, Y, Z float64
 }
 
+//test
 // p5js has the following methods:
 // (https://p5js.org/reference/p5/p5.Vector/)
 // *set(x,y,z) set() and all in between
